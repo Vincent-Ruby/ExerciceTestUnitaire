@@ -51,9 +51,6 @@ public class UserControllerTest {
 	@InjectMocks
 	private UserController userControllerToMock;
 	
-	@Autowired
-	private UserController userController;
-	
 	@Mock
 	private UserService userService;
 
@@ -100,32 +97,48 @@ public class UserControllerTest {
 //			e.printStackTrace();
 //		}
 //	}
-
-//	@Test
-//	public void createEntity() {
-//		LOGGER.info("--------- Testing createEntity Method ----------");
-//		LOGGER.info("--------- Constructing User ----------");
-//		User user = new User(7, "Ronaldo");
-//
-//		MvcResult mvcResult;
-//		try {
-//			LOGGER.info("--------- Serializing User Object ----------");
-//			String inputJson = this.mapToJson(user);
-//			LOGGER.info("--------- Mocking Context WebService and invoking the WebService ----------");
-//			mvcResult = mvc.perform(MockMvcRequestBuilders.post(uri + "/adduser")
-//					.contentType(MediaType.APPLICATION_JSON_VALUE).content(inputJson)).andReturn();
-//			LOGGER.info("--------- Getting HTTP Status ----------");
-//			int status = mvcResult.getResponse().getStatus();
-//			LOGGER.info("--------- Verifying HTTP Status ----------");
-//			assertEquals(200, status);
-//			LOGGER.info("--------- Searching for User ----------");
-//			User userFound = userService.getUserById((long) 7);
-//			LOGGER.info("--------- Verifying User ----------");
-//			assertEquals(userFound.getUserName(), user.getUserName());
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
-//	}
+	@Test
+	public void test_Http_getAllEntityList() {
+		try {
+			LOGGER.info("--------- Mocking Context Webservice -------");
+			MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.get(uri + "/all").accept(MediaType.APPLICATION_JSON_VALUE))
+					.andReturn();
+			LOGGER.info("--------- Getting Http Status -------");
+			int status = mvcResult.getResponse().getStatus();
+			LOGGER.info("--------- Verifying Http Status -------");
+			assertEquals(200, status);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@Test
+	public void test_appel_userService_getAllEntityList() {
+		try {
+			userControllerToMock.getAllUsers();
+			LOGGER.info("--------- Searching for User ----------");
+			Mockito.verify(userService).getAllUsers();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@Test
+	public void test_Http_createEntity() {
+		try  {
+			LOGGER.info("--------- Serializing User Object ----------");
+			String inputJson = this.mapToJson(new User());
+			LOGGER.info("--------- Mocking Context WebService and invoking the WebService ----------");
+			MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.post(uri + "/adduser")
+					.contentType(MediaType.APPLICATION_JSON_VALUE).content(inputJson)).andReturn();
+			LOGGER.info("--------- Getting HTTP Status ----------");
+			int status = mvcResult.getResponse().getStatus();
+			LOGGER.info("--------- Verifying HTTP Status ----------");
+			assertEquals(200, status);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 	
 	@Test
 	public void createEntity() {
